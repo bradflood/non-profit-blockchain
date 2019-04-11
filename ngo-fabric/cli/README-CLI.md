@@ -26,8 +26,6 @@ you can source this file again. Some statements in the file may fail, depending 
 the process your are of creating your Fabic network (I.e. some components may not exist yet), but
 the script will export the values it can find.
 
-You may need to edit this file and add in the `NETWORKID` and `NETWORKMEMBERID`, if you have
-already created the Fabric network.
 
 ```
 cd ~/non-profit-blockchain/ngo-fabric
@@ -37,7 +35,7 @@ vi 0-exports.sh
 Execute the following script:
 
 ```
-cd ~/non-profit-blockchain/ngo-fabric
+cd ~/non-profit-blockchain/ngo-fabric/cli
 source ./0-exports.sh
 ```
 
@@ -51,6 +49,24 @@ cd ~/non-profit-blockchain/ngo-fabric
 ./1-fabric-network.sh
 ```
 
+Wait until the network has been created
+
+When the network is created, execute the following script:
+
+```
+source ~/non-profit-blockchain/ngo-fabric/templates/exports-template.sh
+```
+
+## Step 2 - in Cloud9
+Create the Fabric peer.
+
+Execute the following script:
+
+```
+cd ~/non-profit-blockchain/ngo-fabric
+./2-fabric-peer.sh
+```
+
 ## Step 2 - in Cloud9
 Create the Fabric client node, which will host the Fabric CLI. You will use the CLI to administer
 the Fabric network. The Fabric client node will be created in its own VPC, with VPC endpoints 
@@ -60,7 +76,7 @@ Execute the following script:
 
 ```
 cd ~/non-profit-blockchain/ngo-fabric
-./2-vpc-client-node.sh
+./3-vpc-client-node.sh
 ```
 
 Check the progress in the AWS CloudFormation console
@@ -100,17 +116,7 @@ cd ~/non-profit-blockchain/ngo-fabric
 
 Now exit your SSH session.
 
-## Step 4 - in Cloud9
-Make sure you are back in Cloud9.
 
-Create the Fabric peer.
-
-Execute the following script:
-
-```
-cd ~/non-profit-blockchain/ngo-fabric
-./4-fabric-peer.sh
-```
 
 ## Step 5 - first in Cloud9, then in Fabric client node
 Prior to executing any commands in the Fabric client node, you will need to export ENV variables
