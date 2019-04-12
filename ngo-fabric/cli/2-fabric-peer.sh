@@ -15,7 +15,7 @@
 
 echo Create the Fabric Peer node
 token=$(uuidgen)
-echo Creating Fabric peer for network $networkname
+echo Creating Fabric peer for network $NETWORKNAME, member $MEMBERNAME
 result=$(aws managedblockchain create-node  --region $REGION \
         --client-request-token $token \
         --node-configuration '{"InstanceType":"bc.t3.small","AvailabilityZone":"us-east-1a"}' \
@@ -37,8 +37,9 @@ while (true); do
     fi
 done
 
+nodeID=nd-VVXIYKU2QZG77IO5HZH5TPRRBI
 #AvailabilityZone=$(aws managedblockchain get-node  --region $REGION --network-id $NETWORKID --member-id $MEMBERID --node-id $nodeID --query 'Node.AvailabilityZone' --output text)
-endpoint=$(aws managedblockchain get-node --region $REGION --network-id $NETWORKID --member-id $MEMBERID --node-id $nodeID --query 'Node.Endpoint' --output text)
+endpoint=$(aws managedblockchain get-node --region $REGION --network-id $NETWORKID --member-id $MEMBERID --node-id $nodeID --query 'Node.FrameworkAttributes.Fabric.PeerEndpoint' --output text)
 echo Useful information
 echo
 echo Node ID: $nodeID

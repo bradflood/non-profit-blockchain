@@ -45,7 +45,7 @@ Create the Fabric network.
 Execute the following script:
 
 ```
-cd ~/non-profit-blockchain/ngo-fabric
+cd ~/non-profit-blockchain/ngo-fabric/cli
 ./1-fabric-network.sh
 ```
 
@@ -63,11 +63,11 @@ Create the Fabric peer.
 Execute the following script:
 
 ```
-cd ~/non-profit-blockchain/ngo-fabric
+cd ~/non-profit-blockchain/ngo-fabric/cli
 ./2-fabric-peer.sh
 ```
 
-## Step 2 - in Cloud9
+## Step 3 - in Cloud9
 Create the Fabric client node, which will host the Fabric CLI. You will use the CLI to administer
 the Fabric network. The Fabric client node will be created in its own VPC, with VPC endpoints 
 pointing to the Fabric network you created in [Part 1](../ngo-fabric/README.md)
@@ -81,10 +81,10 @@ cd ~/non-profit-blockchain/ngo-fabric
 
 Check the progress in the AWS CloudFormation console
 
-## Step 3 - SSH into the EC2 Fabric client node
+## Steps 3a and 3b - SSH into the EC2 Fabric client node
 Setup the Fabric client node. This step installs the necessary packages.
 
-SSH into the Fabric client node. The key should be in your home directory. The DNS of the
+From Cloud 9, SSH into the Fabric client node. The key should be in your home directory. The DNS of the
 EC2 instance can be found in the output of the CloudFormation stack.
 
 ```
@@ -95,7 +95,7 @@ Clone the repo:
 
 ```
 cd
-git clone https://github.com/aws-samples/non-profit-blockchain.git
+git clone https://github.com/bradflood/non-profit-blockchain.git
 ```
 
 Execute the following script:
@@ -129,8 +129,9 @@ the client node as explained below.
 In Cloud9:
 
 ```
-source ./0-exports.sh
+source templates/export-template.sh
 ```
+
 
 Find the section titled 'Exports to be used on client node'. Copy all the export commands under this 
 section using ctrl-c. The exports you copy should look something like this:
@@ -146,6 +147,8 @@ export CHAINCODENAME=mycc
 export CHAINCODEVERSION=v0
 export CHAINCODEDIR=github.com/chaincode_example02/go
 ```
+
+
 
 In the Fabric client node.
 

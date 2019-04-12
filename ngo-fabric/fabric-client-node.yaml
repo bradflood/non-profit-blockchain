@@ -128,8 +128,10 @@ Resources:
     Properties:
         VpcId:                                    !Ref BlockchainWorkshopVPC
         Tags:
+          - Key:                                  Name
+            Value:                                ReInventBlockchainWorkshop
           - Key:                                  ReInventBlockchainWorkshop
-            Value:                                RouteTable
+            Value:                                RouteTable            
  
   BlockchainWorkshopRoute:
     Type:                                         AWS::EC2::Route

@@ -126,7 +126,7 @@ app.post('/users', awaitHandler(async (req, res) => {
 	let response = await connection.getRegisteredUser(username, orgName, true);
 	logger.info('##### POST on Users - returned from registering the username %s for organization %s', username, orgName);
     logger.info('##### POST on Users - getRegisteredUser response secret %s', response.secret);
-    logger.info('##### POST on Users - getRegisteredUser response secret %s', response.message);
+    logger.info('##### POST on Users - getRegisteredUser response message %s', response.message);
     if (response && typeof response !== 'string') {
         logger.info('##### POST on Users - Successfully registered the username %s for organization %s', username, orgName);
 		logger.info('##### POST on Users - getRegisteredUser response %s', response);
