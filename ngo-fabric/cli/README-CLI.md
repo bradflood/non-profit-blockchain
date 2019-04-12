@@ -132,7 +132,6 @@ In Cloud9:
 source templates/export-template.sh
 ```
 
-
 Find the section titled 'Exports to be used on client node'. Copy all the export commands under this 
 section using ctrl-c. The exports you copy should look something like this:
 
