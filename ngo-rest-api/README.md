@@ -12,13 +12,13 @@ From Cloud9, SSH into the Fabric client node. The key (i.e. the .PEM file) shoul
 The DNS of the Fabric client node EC2 instance can be found in the output of the AWS CloudFormation stack you
 created in [Part 1](../ngo-fabric/README.md)
 
-``` bash
+```bash
 ssh ec2-user@<dns of EC2 instance> -i ~/<Fabric network name>-keypair.pem
 ```
 
 You should have already cloned this repo in [Part 1](../ngo-fabric/README.md)
 
-``` bash
+```bash
 cd ~
 git clone --single-branch -b byzantine-flu-us https://github.com/bradflood/non-profit-blockchain.git
 ```
@@ -31,7 +31,7 @@ session and re-connect, you'll need to source the file again. The `source` comma
 will print out the values of the key ENV variables. Make sure they are all populated. If
 they are not, follow Step 4 in [Part 1](../ngo-fabric/README.md) to repopulate them:
 
-``` bash
+```bash
 cd ~/non-profit-blockchain/ngo-fabric
 source fabric-exports.sh
 ```
@@ -42,11 +42,11 @@ On the Fabric client node.
 
 Install Node.js. We will use v8.x.
 
-``` bash
+```bash
 curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.0/install.sh | bash
 ```
 
-``` bash
+```bash
 . ~/.nvm/nvm.sh
 nvm install lts/carbon
 nvm use lts/carbon
@@ -54,7 +54,7 @@ nvm use lts/carbon
 
 Amazon Linux seems to be missing g++, so:
 
-``` bash
+```bash
 sudo yum install gcc-c++ -y
 ```
 
@@ -62,7 +62,7 @@ sudo yum install gcc-c++ -y
 
 On the Fabric client node.
 
-``` bash
+```bash
 cd ~/non-profit-blockchain/ngo-rest-api
 npm install
 ```
@@ -80,7 +80,7 @@ URL endpoints for the peer, ordering service and CA, an 'mspid', a 'caName', and
 match those you entered when creating the Fabric network. If they do not match, edit the connection profile
 and update them. The connection profile can be found here: `~/non-profit-blockchain/tmp/connection-profile/ngo-connection-profile.yaml`
 
-``` bash
+```bash
 cd ~/non-profit-blockchain/ngo-rest-api/connection-profile
 ./gen-connection-profile.sh
 more ~/non-profit-blockchain/tmp/connection-profile/ngo-connection-profile.yaml
@@ -90,7 +90,7 @@ Check the config file used by app.js. Make sure the peer name in config.json (un
 the same as the peer name in the connection profile. Also check that the admin username and 
 password are correct and match the values you updated in the connection profile.
 
-``` bash
+```bash
 cd ~/non-profit-blockchain/ngo-rest-api
 vi config.json
 ```
@@ -125,7 +125,7 @@ Run the app (in the background if you prefer):
 ``` bash
 cd ~/non-profit-blockchain/ngo-rest-api
 nvm use lts/carbon
-node app.js &
+./start.sh
 ```
 
 ## Step 5 - Test the REST API
@@ -140,7 +140,7 @@ queries and invoke transactions.
 
 request:
 
-``` bash
+```bash
 curl -s -X POST http://localhost:3000/users -H "content-type: application/x-www-form-urlencoded" -d 'username=michael&orgName=Org1'
 ```
 
@@ -155,10 +155,10 @@ response:
 request:
 
 ```bash
-curl -s -X POST "http://localhost:3000/donors" -H "content-type: application/json" -d '{ 
-   "donorUserName": "edge2", 
-   "email": "edge2@def.com", 
-   "registeredDate": "2018-10-22T11:52:20.182Z" 
+curl -s -X POST "http://localhost:3000/donors" -H "content-type: application/json" -d '{
+   "donorUserName": "edge2",
+   "email": "edge2@def.com",
+   "registeredDate": "2018-10-22T11:52:20.182Z"
 }'
 ```
 
