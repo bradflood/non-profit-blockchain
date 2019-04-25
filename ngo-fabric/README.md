@@ -207,20 +207,13 @@ cp ~/admin-msp/signcerts/* ~/admin-msp/admincerts/
 
 On the Fabric client node.
 
-Update the configtx channel configuration. The Name and ID fields should be updated with the member ID.
-You can obtain the member ID from the Amazon Managed Blockchain Console, or from the ENV variables
-exported to your current session.
+Update the configtx channel configuration. The Name and ID fields will be updated with the member ID.
+Verify the generated configtx.yaml file has a value for Name
 
 ```bash
-echo $MEMBERID
-```
-
-Update the configtx.yaml file. Make sure you edit the configtx.yaml file you copy to your home
-directory below, NOT the one in the repo:
-
-```bash
-cp ~/non-profit-blockchain/ngo-fabric/configtx.yaml ~
-vi ~/configtx.yaml
+cd ~~/non-profit-blockchain/ngo-fabric
+source gen-configtx.sh
+cat ~/configtx.yaml
 ```
 
 Generate the configtx channel configuration by executing the following script. When the channel is created, this channel configuration will become the genesis block (i.e. block 0) on the channel:
