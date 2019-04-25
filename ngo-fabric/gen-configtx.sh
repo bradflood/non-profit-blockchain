@@ -14,7 +14,7 @@
 # permissions and limitations under the License.
 
 #copy the configtx template
-cp ~/non-profit-blockchain/ngo-fabric/configtx.yaml ~
+cp ~/non-profit-blockchain/ngo-fabric/templates/configtx.yaml ~
 
 #update the connection profiles with endpoints and other information
-sed -i "s|<REPLACE WITH MEMBER_ID>|$MEMBER_ID|g" ~/configtx.yaml
+sed -i "s|<REPLACE WITH MEMBER_ID>|$MEMBERID|g" ~/configtx.yaml
