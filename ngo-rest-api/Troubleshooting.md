@@ -2,7 +2,7 @@
 
 Error: [2018-11-06T11:44:51.485] [ERROR] Helper - ##### getRegisteredUser - Failed to get registered user: michael with error: TypeError: Cannot read property 'curve' of undefined
 
-Solution: make sure the certificate stores are removed before starting the REST api. Using `./start.sh` will remove these. The 
+Solution: make sure the certificate stores are removed before starting the REST api. Using `./start.sh` will remove these. The
 error is caused by using the wrong certificate - probably an old one from the cert store.
 
 
