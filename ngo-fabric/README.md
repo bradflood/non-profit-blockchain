@@ -211,7 +211,7 @@ Update the configtx channel configuration. The Name and ID fields will be update
 Verify the generated configtx.yaml file has a value for Name
 
 ```bash
-cd ~~/non-profit-blockchain/ngo-fabric
+cd ~/non-profit-blockchain/ngo-fabric
 source gen-configtx.sh
 cat ~/configtx.yaml
 ```
@@ -234,18 +234,19 @@ You should see:
 
 Check that the channel configuration has been generated:
 
-```
-ls -lt ~/$CHANNEL.pb 
+```bash
+ls -lt ~/$CHANNEL.pb
 ```
 
 ## Step 6 - Create a Fabric channel
+
 On the Fabric client node.
 
 Create a Fabric channel.
 
 Execute the following script:
 
-```
+```bash
 docker exec -e "CORE_PEER_TLS_ENABLED=true" -e "CORE_PEER_TLS_ROOTCERT_FILE=/opt/home/managedblockchain-tls-chain.pem" \
     -e "CORE_PEER_ADDRESS=$PEER" -e "CORE_PEER_LOCALMSPID=$MSP" -e "CORE_PEER_MSPCONFIGPATH=$MSP_PATH" \
     cli peer channel create -c $CHANNEL -f /opt/home/$CHANNEL.pb -o $ORDERER --cafile $CAFILE --tls
@@ -253,7 +254,7 @@ docker exec -e "CORE_PEER_TLS_ENABLED=true" -e "CORE_PEER_TLS_ROOTCERT_FILE=/opt
 
 You should see:
 
-```
+```bash
 2018-11-26 21:41:29.684 UTC [channelCmd] InitCmdFactory -> INFO 001 Endorser and orderer connections initialized
 2018-11-26 21:41:29.752 UTC [cli/common] readBlock -> INFO 002 Got status: &{NOT_FOUND}
 2018-11-26 21:41:29.761 UTC [channelCmd] InitCmdFactory -> INFO 003 Endorser and orderer connections initialized
@@ -266,7 +267,7 @@ You should see:
 This will create a file called `mychannel.block` in the CLI container in the directory `/opt/home/fabric-samples/chaincode/hyperledger/fabric/peer`. Since this directory is mounted from the host
 Fabric client node, you can see the block file here:
 
-```
+```bash
 ls -lt /home/ec2-user/fabric-samples/chaincode/hyperledger/fabric/peer
 ```
 
@@ -274,7 +275,7 @@ If the channel creation times out, it's possible that the channel has still been
 the block from the channel itself. Executing the command below will read the channel config and save the
 genesis block in the same directory as mentioned above:
 
-```
+```bash
 docker exec -e "CORE_PEER_TLS_ENABLED=true" -e "CORE_PEER_TLS_ROOTCERT_FILE=/opt/home/managedblockchain-tls-chain.pem"  \
     -e "CORE_PEER_ADDRESS=$PEER"  -e "CORE_PEER_LOCALMSPID=$MSP" -e "CORE_PEER_MSPCONFIGPATH=$MSP_PATH" \
     cli peer channel fetch oldest /opt/home/fabric-samples/chaincode/hyperledger/fabric/peer/$CHANNEL.block \
@@ -283,7 +284,7 @@ docker exec -e "CORE_PEER_TLS_ENABLED=true" -e "CORE_PEER_TLS_ROOTCERT_FILE=/opt
 
 Check that the block file now exists:
 
-```
+```bash
 ls -lt /home/ec2-user/fabric-samples/chaincode/hyperledger/fabric/peer
 ```
 

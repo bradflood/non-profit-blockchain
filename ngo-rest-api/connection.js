@@ -27,7 +27,7 @@ async function getClientForOrg (userorg, username) {
     let orgLower = userorg.toLowerCase();
     let clientConfig = '../tmp/connection-profile/' + orgLower + '/client-' + orgLower + '.yaml';
 
-    logger.info('##### getClient - Loading connection profiles from file: %s and %s', config, clientConfig);
+    logger.info('##### getClientForOrg - Loading connection profiles from file: %s and %s', config, clientConfig);
 
     // Load the connection profiles. First load the network settings, then load the client specific settings
     let client = hfc.loadFromConfig(config);
@@ -36,14 +36,16 @@ async function getClientForOrg (userorg, username) {
 	// Create the state store and the crypto store 
 	await client.initCredentialStores();
 
+	logger.info('##### getClientForOrg - state and crypto stores created successfully');
+
 	// Try and obtain the user from persistence if the user has previously been 
 	// registered and enrolled
 	if(username) {
 		let user = await client.getUserContext(username, true);
 		if(!user) {
-			throw new Error(util.format('##### getClient - User was not found :', username));
+			throw new Error(util.format('##### getClientForOrg - User was not found :', username));
 		} else {
-			logger.info('##### getClient - User %s was found to be registered and enrolled', username);
+			logger.info('##### getClientForOrg - User %s was found to be registered and enrolled', username);
 		}
 	}
 	logger.info('============ END getClientForOrg for org %s and user %s \n\n', userorg, username);
