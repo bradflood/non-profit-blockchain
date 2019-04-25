@@ -123,12 +123,7 @@ app.post('/users', awaitHandler(async (req, res) => {
 	logger.info('##### End point : /users');
 	logger.info('##### POST on Users- username : ' + username);
 	logger.info('##### POST on Users - userorg  : ' + orgName);
-	try {
-		let response = await connection.getRegisteredUser(username, orgName, true);
-	} catch (error) {
-		logger.error('##### caught exception in call to getRegisteredUser');
-		error_message = error.toString();
-	}
+	let response = await connection.getRegisteredUser(username, orgName, true);
 	logger.info('##### POST on Users - returned from registering the username %s for organization %s', username, orgName);
     logger.info('##### POST on Users - getRegisteredUser response secret %s', response.secret);
     logger.info('##### POST on Users - getRegisteredUser response message %s', response.message);
@@ -491,7 +486,12 @@ app.post('/spend', awaitHandler(async (req, res) => {
 	logger.info('##### dummySpend - args : ' + JSON.stringify(args));
 	logger.info('##### dummySpend - peers : ' + peers);
 
-	let message = await invoke.invokeChaincode(peers, channelName, chaincodeName, args, fcn, username, orgName);
+	try {
+		let message = await invoke.invokeChaincode(peers, channelName, chaincodeName, args, fcn, username, orgName);
+	} catch (error) {
+			logger.error('##### Post for Spend - Failed to execute chaincode.xxx');
+			return 'failed '+error.toString();
+	}
 	res.send(message);
 }));
 
