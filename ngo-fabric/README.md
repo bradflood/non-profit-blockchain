@@ -126,7 +126,7 @@ Clone the repo:
 
 ```
 cd ~
-git clone https://github.com/aws-samples/non-profit-blockchain.git
+git clone https://github.com/bradflood/non-profit-blockchain.git
 ```
 
 Create the file that includes the ENV export values that define your Fabric network configuration.
@@ -145,6 +145,7 @@ Source the file, so the exports are applied to your current session. If you exit
 session and re-connect, you'll need to source the file again.
 
 ```bash
+
 cd ~/non-profit-blockchain/ngo-fabric
 source fabric-exports.sh
 ```
@@ -189,42 +190,42 @@ Enroll an admin identity with the Fabric CA (certificate authority). We will use
 identity to administer the Fabric network and perform tasks such as creating channels
 and instantiating chaincode.
 
-```
+```bash
 export PATH=$PATH:/home/ec2-user/go/src/github.com/hyperledger/fabric-ca/bin
 cd ~
-fabric-ca-client enroll -u https://$ADMINUSER:$ADMINPWD@$CASERVICEENDPOINT --tls.certfiles /home/ec2-user/managedblockchain-tls-chain.pem -M /home/ec2-user/admin-msp 
+fabric-ca-client enroll -u https://$ADMINUSER:$ADMINPWD@$CASERVICEENDPOINT --tls.certfiles /home/ec2-user/managedblockchain-tls-chain.pem -M /home/ec2-user/admin-msp
 ```
 
 Some final copying of the certificates is necessary:
 
-```
+```bash
 mkdir -p /home/ec2-user/admin-msp/admincerts
 cp ~/admin-msp/signcerts/* ~/admin-msp/admincerts/
-cd ~/non-profit-blockchain/ngo-fabric
 ```
 
 ## Step 5 - Update the configtx channel configuration
+
 On the Fabric client node.
 
-Update the configtx channel configuration. The Name and ID fields should be updated with the member ID. 
-You can obtain the member ID from the Amazon Managed Blockchain Console, or from the ENV variables 
+Update the configtx channel configuration. The Name and ID fields should be updated with the member ID.
+You can obtain the member ID from the Amazon Managed Blockchain Console, or from the ENV variables
 exported to your current session.
 
-```
+```bash
 echo $MEMBERID
 ```
 
 Update the configtx.yaml file. Make sure you edit the configtx.yaml file you copy to your home
 directory below, NOT the one in the repo:
 
-```
+```bash
 cp ~/non-profit-blockchain/ngo-fabric/configtx.yaml ~
 vi ~/configtx.yaml
 ```
 
 Generate the configtx channel configuration by executing the following script. When the channel is created, this channel configuration will become the genesis block (i.e. block 0) on the channel:
 
-```
+```bash
 docker exec cli configtxgen -outputCreateChannelTx /opt/home/$CHANNEL.pb -profile OneOrgChannel -channelID $CHANNEL --configPath /opt/home/
 ```
 

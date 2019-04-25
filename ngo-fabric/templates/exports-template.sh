@@ -27,7 +27,8 @@ aws s3 cp s3://us-east-1.managedblockchain-preview/etc/service-2.json .
 aws configure add-model --service-model file://service-2.json
 
 # No need to change anything below here
-export NETWORKID=$(aws managedblockchain list-networks --name $NETWORKNAME --query 'Networks[0].Id' --output text)
+aws configure set region $REGION
+export NETWORKID=$(aws managedblockchain list-networks --region $REGION --name $NETWORKNAME --query 'Networks[0].Id' --output text)
 export MEMBERID=$(aws managedblockchain list-members --network-id $NETWORKID --name $MEMBERNAME --query 'Members[0].Id' --output text)
 VpcEndpointServiceName=$(aws managedblockchain get-network --region $REGION --network-id $NETWORKID --query 'Network.VpcEndpointServiceName' --output text)
 OrderingServiceEndpoint=$(aws managedblockchain get-network --region $REGION --network-id $NETWORKID --query 'Network.FrameworkAttributes.Fabric.OrderingServiceEndpoint' --output text)
