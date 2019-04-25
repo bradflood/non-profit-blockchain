@@ -5,46 +5,48 @@ and exposes the chaincode functions as REST APIs. This allows loose coupling bet
 and the underlying Fabric network.
 
 ## Pre-requisites
+
 For the Fabric workshop, the REST API server will run on the Fabric client node.
 
-From Cloud9, SSH into the Fabric client node. The key (i.e. the .PEM file) should be in your home directory. 
-The DNS of the Fabric client node EC2 instance can be found in the output of the AWS CloudFormation stack you 
+From Cloud9, SSH into the Fabric client node. The key (i.e. the .PEM file) should be in your home directory.
+The DNS of the Fabric client node EC2 instance can be found in the output of the AWS CloudFormation stack you
 created in [Part 1](../ngo-fabric/README.md)
 
-```
+``` bash
 ssh ec2-user@<dns of EC2 instance> -i ~/<Fabric network name>-keypair.pem
 ```
 
 You should have already cloned this repo in [Part 1](../ngo-fabric/README.md)
 
-```
+``` bash
 cd ~
-git clone https://github.com/aws-samples/non-profit-blockchain.git
+git clone --single-branch -b byzantine-flu-us https://github.com/bradflood/non-profit-blockchain.git
 ```
 
-You will need to set the context before carrying out any Fabric CLI commands. We do this 
+You will need to set the context before carrying out any Fabric CLI commands. We do this
 using the export files that were generated for us in [Part 1](../ngo-fabric/README.md)
 
-Source the file, so the exports are applied to your current session. If you exit the SSH 
+Source the file, so the exports are applied to your current session. If you exit the SSH
 session and re-connect, you'll need to source the file again. The `source` command below
 will print out the values of the key ENV variables. Make sure they are all populated. If
 they are not, follow Step 4 in [Part 1](../ngo-fabric/README.md) to repopulate them:
 
-```
+``` bash
 cd ~/non-profit-blockchain/ngo-fabric
 source fabric-exports.sh
 ```
 
 ## Step 1 - Install Node
+
 On the Fabric client node.
 
 Install Node.js. We will use v8.x.
 
-```
+``` bash
 curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.0/install.sh | bash
 ```
 
-```
+``` bash
 . ~/.nvm/nvm.sh
 nvm install lts/carbon
 nvm use lts/carbon
@@ -52,19 +54,21 @@ nvm use lts/carbon
 
 Amazon Linux seems to be missing g++, so:
 
-```
+``` bash
 sudo yum install gcc-c++ -y
 ```
 
 ## Step 2 - Install dependencies
+
 On the Fabric client node.
 
-```
+``` bash
 cd ~/non-profit-blockchain/ngo-rest-api
 npm install
 ```
 
 ## Step 3 - Generate a connection profile
+
 On the Fabric client node.
 
 The REST API needs a connection profile to connect to the Fabric network. Connection profiles describe
@@ -76,7 +80,7 @@ URL endpoints for the peer, ordering service and CA, an 'mspid', a 'caName', and
 match those you entered when creating the Fabric network. If they do not match, edit the connection profile
 and update them. The connection profile can be found here: `~/non-profit-blockchain/tmp/connection-profile/ngo-connection-profile.yaml`
 
-```
+``` bash
 cd ~/non-profit-blockchain/ngo-rest-api/connection-profile
 ./gen-connection-profile.sh
 more ~/non-profit-blockchain/tmp/connection-profile/ngo-connection-profile.yaml
@@ -86,14 +90,14 @@ Check the config file used by app.js. Make sure the peer name in config.json (un
 the same as the peer name in the connection profile. Also check that the admin username and 
 password are correct and match the values you updated in the connection profile.
 
-```
+``` bash
 cd ~/non-profit-blockchain/ngo-rest-api
 vi config.json
 ```
 
 config.json should look something like this:
 
-```
+``` json
 {
     "host":"localhost",
     "port":"3000",
@@ -106,46 +110,51 @@ config.json should look something like this:
     "admins":[
        {
           "username":"admin",
-          "secret":"Adminpwd1!"
+          "secret":"adminpwd"
        }
     ]
  }
 ```
 
 ## Step 4 - Run the REST API Node.js application
+
 On the Fabric client node.
 
 Run the app (in the background if you prefer):
 
-```
+``` bash
 cd ~/non-profit-blockchain/ngo-rest-api
 nvm use lts/carbon
 node app.js &
 ```
 
 ## Step 5 - Test the REST API
+
 On the Fabric client node.
 
 Once the app is running you can register an identity, and then start to execute chaincode. The command
 below registers a user identity with the Fabric CA. This user identity is then used to run chaincode
 queries and invoke transactions.
 
-### Register/enroll a user:
+### Register/enroll a user
 
 request:
-```
+
+``` bash
 curl -s -X POST http://localhost:3000/users -H "content-type: application/x-www-form-urlencoded" -d 'username=michael&orgName=Org1'
 ```
 
 response:
-```
+
+```json
 {"success":true,"secret":"","message":"michael enrolled Successfully"}
 ```
 
 ### POST a Donor
 
 request:
-```
+
+```bash
 curl -s -X POST "http://localhost:3000/donors" -H "content-type: application/json" -d '{ 
    "donorUserName": "edge2", 
    "email": "edge2@def.com", 
@@ -156,19 +165,21 @@ curl -s -X POST "http://localhost:3000/donors" -H "content-type: application/jso
 response:
 A transaction ID, which can be ignored:
 
-```
+```json
 {"transactionId":"2f3f3a85340bde09b505b0d37235d1d32a674e43a66229f9a205e7d8d5328ed1"}
 ```
 
 ### Get all donors
 
 request:
-```
+
+```bash
 curl -s -X GET   "http://localhost:3000/donors" -H "content-type: application/json"
 ```
 
 response:
-```
+
+```json
 [
     {"docType":"donor","donorUserName":"edge","email":"edge@def.com","registeredDate":"2018-10-22T11:52:20.182Z"}
 ]
@@ -212,19 +223,21 @@ cd ~/non-profit-blockchain/ngo-rest-api
 ```
 
 # Testing
-The workshop runs the REST API server on the Fabric client node. If you exit the SSH session on the Fabric client node, 
-the running REST API server will automatically exit. You would need to restart it after SSH'ing back into 
+
+The workshop runs the REST API server on the Fabric client node. If you exit the SSH session on the Fabric client node,
+the running REST API server will automatically exit. You would need to restart it after SSH'ing back into
 the Fabric client node.
 
-For purposes of the workshop we can just leave the SSH session open. However, if we need to keep the REST 
+For purposes of the workshop we can just leave the SSH session open. However, if we need to keep the REST
 API application running after we exit the SSH session, we can use various methods to do this. I use `PM2`,
 using a command such as `pm2 start app.js`, which will keep the app running. The logs can be found in `~/.pm2/logs`.
 
 ## Move on to Part 4
+
 The workshop instructions can be found in the README files in parts 1-4:
 
 * [Part 1:](../ngo-fabric/README.md) Start the workshop by building the Hyperledger Fabric blockchain network using Amazon Managed Blockchain.
-* [Part 2:](../ngo-chaincode/README.md) Deploy the non-profit chaincode. 
-* [Part 3:](../ngo-rest-api/README.md) Run the RESTful API server. 
+* [Part 2:](../ngo-chaincode/README.md) Deploy the non-profit chaincode.
+* [Part 3:](../ngo-rest-api/README.md) Run the RESTful API server.
 * [Part 4:](../ngo-ui/README.md) Run the application. 
-* [Part 5:](../new-member/README.md) Add a new member to the network. 
+* [Part 5:](../new-member/README.md) Add a new member to the network.

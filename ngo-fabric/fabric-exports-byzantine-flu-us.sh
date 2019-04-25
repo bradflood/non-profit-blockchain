@@ -14,12 +14,12 @@
 # permissions and limitations under the License.
 
 # Update these values, then `source` this script
-export REGION=<region>
-export NETWORKNAME=<your network name>
-export MEMBERNAME=<your member name>
+export REGION=us-east-1
+export NETWORKNAME=byzantine-flu-us
+export MEMBERNAME=KeyholeSoftware
 export NETWORKVERSION=1.2
-export ADMINUSER=<admin username>
-export ADMINPWD=<admin pwd>
+export ADMINUSER=byzantineAdmin
+export ADMINPWD=ilMBC.2019
 
 echo Downloading and installing model file for new service
 cd ~

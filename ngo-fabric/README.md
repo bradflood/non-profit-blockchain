@@ -19,21 +19,22 @@ In the Cloud9 console, click 'Create Environment'. Using 'us-east-1' for the reg
 4. Click **Create environment**. It would typically take 30-60s to create your Cloud9 IDE
 5. In the Cloud9 terminal, in the home directory, clone this repo:
 
-```
+```bash
 cd ~
-git clone https://github.com/aws-samples/non-profit-blockchain.git
+git clone https://github.com/bradflood/non-profit-blockchain.git
 ```
 
 Download the model file for the new Amazon Managed Blockchain service. This is a temporary step
 and will not be required once the `managedblockchain` service has been included in the latest CLI.
 
-```
+```bash
 cd ~
 aws s3 cp s3://us-east-1.managedblockchain-preview/etc/service-2.json .
 aws configure add-model --service-model file://service-2.json
 ```
 
 ## Step 1 - Create the Hyperledger Fabric blockchain network
+
 In the Amazon Managed Blockchain Console: https://console.aws.amazon.com/managedblockchain
 
 Make sure you are in the correct AWS region (i.e. us-east-1, also known as N. Virginia) and follow the steps below:
@@ -50,6 +51,7 @@ Before continuing, check to see that your Fabric network has been created and is
 wait for it to complete. Otherwise the steps below may fail.
 
 ## Step 2 - Create the Fabric Peer
+
 In the Amazon Managed Blockchain Console: https://console.aws.amazon.com/managedblockchain
 
 1. In the new network you have created, click on the member in the Members section.
@@ -59,6 +61,7 @@ In the Amazon Managed Blockchain Console: https://console.aws.amazon.com/managed
 We'll continue with the next steps while we wait for the peer node to become Available.
 
 ## Step 3 - Create the Fabric client node
+
 In your Cloud9 terminal window.
 
 Create the Fabric client node, which will host the Fabric CLI. You will use the CLI to administer
@@ -71,16 +74,17 @@ are available as export variables before running the script below.
 
 In Cloud9:
 
-```
+```bash
 export REGION=us-east-1
-export NETWORKID=<the network ID you created in Step1, from the Amazon Managed Blockchain Console>
 export NETWORKNAME=<the name you gave the network>
+export NETWORKID=$(aws managedblockchain list-networks --name $NETWORKNAME --query 'Networks[0].Id' --output text)
+echo $NETWORKID
 ```
 
 Set the VPC endpoint. Make sure it has been populated and exported. If the `echo` statement below shows
-that it's blank, check the details under your network in the Amazon Managed Blockchain Console: 
+that it's blank, check the details under your network in the Amazon Managed Blockchain Console:
 
-```
+```bash
 export VPCENDPOINTSERVICENAME=$(aws managedblockchain get-network --region $REGION --network-id $NETWORKID --query 'Network.VpcEndpointServiceName' --output text)
 echo $VPCENDPOINTSERVICENAME
 ```
@@ -90,7 +94,7 @@ CloudFormation stack. You will see an error saying `key pair does not exist`. Th
 will check whether the keypair exists before creating it. I don't want to overwrite any existing
 keypairs you have, so just ignore this error and let the script continue:
 
-```
+```bash
 cd ~/non-profit-blockchain/ngo-fabric
 ./3-vpc-client-node.sh
 ```
@@ -100,19 +104,20 @@ You will find some useful information in the Outputs tab of the CloudFormation s
 is complete. We will use this information in later steps.
 
 ## Step 4 - Prepare the Fabric client node and enroll an identity
+
 On the Fabric client node.
 
 Prior to executing any commands on the Fabric client node, you will need to export ENV variables
 that provide a context to Hyperledger Fabric. These variables will tell the client node which peer
-node to interact with, which TLS certs to use, etc. 
+node to interact with, which TLS certs to use, etc.
 
-From Cloud9, SSH into the Fabric client node. The key (i.e. the .PEM file) should be in your home directory. 
-The DNS of the Fabric client node EC2 instance can be found in the output of the CloudFormation stack you 
+From Cloud9, SSH into the Fabric client node. The key (i.e. the .PEM file) should be in your home directory.
+The DNS of the Fabric client node EC2 instance can be found in the output of the CloudFormation stack you
 created in Step 3 above.
 
 Answer 'yes' if prompted: `Are you sure you want to continue connecting (yes/no)`
 
-```
+```bash
 cd ~
 ssh ec2-user@<dns of EC2 instance> -i ~/<Fabric network name>-keypair.pem
 ```
@@ -132,45 +137,51 @@ cp templates/exports-template.sh fabric-exports.sh
 vi fabric-exports.sh
 ```
 
-Update the export statements at the top of the file. The info you need either matches what you 
-entered when creating the Fabric network in [Part 1](../ngo-fabric/README.md), or can be found 
+Update the export statements at the top of the file. The info you need either matches what you
+entered when creating the Fabric network in [Part 1](../ngo-fabric/README.md), or can be found
 in the Amazon Managed Blockchain Console, under your network.
 
-Source the file, so the exports are applied to your current session. If you exit the SSH 
+Source the file, so the exports are applied to your current session. If you exit the SSH
 session and re-connect, you'll need to source the file again.
 
-```
+```bash
 cd ~/non-profit-blockchain/ngo-fabric
 source fabric-exports.sh
 ```
 
 Sourcing the file will do two things:
+
 * export the necessary ENV variables
 * create another file which contains the export values you need to use when working with a Fabric peer node.
 This can be found in the file: `~/peer-exports.sh`. You will see how to use this in a later step.
 
 Check the `source` worked:
 
+```bash
+echo $PEERSERVICEENDPOINT
 ```
-$ echo $PEERSERVICEENDPOINT
+
+The output should be similar to the following
+
+```text
 nd-4MHB4EKFCRF7VBHXZE2ZU4F6GY.m-B7YYBFY4GREBZLPCO2SUS4GP3I.n-WDG36TTUD5HEJORZUPF4REKMBI.managedblockchain.us-east-1.amazonaws.com:30003
 ```
 
 Check the peer export file exists and that it contains a number of export keys with values:
 
-```
-cat ~/peer-exports.sh 
+```bash
+cat ~/peer-exports.sh
 ```
 
 If the file has values for all keys, source it:
 
-```
-source ~/peer-exports.sh 
+```bash
+source ~/peer-exports.sh
 ```
 
 Get the latest version of the Managed Blockchain PEM file. This will overwrite the existing file in the home directory with the latest version of this file:
 
-```
+```bash
 aws s3 cp s3://us-east-1.managedblockchain-preview/etc/managedblockchain-tls-chain.pem  /home/ec2-user/managedblockchain-tls-chain.pem
 ```
 
