@@ -11,39 +11,40 @@ From Cloud9, SSH into the Fabric client node. The key (i.e. the .PEM file) shoul
 The DNS of the Fabric client node EC2 instance can be found in the output of the CloudFormation stack you 
 created in [Part 1](../ngo-fabric/README.md)
 
-```
+```bash
 ssh ec2-user@<dns of EC2 instance> -i ~/<Fabric network name>-keypair.pem
 ```
 
 You should have already cloned this repo in [Part 1](../ngo-fabric/README.md)
 
-```
+```bash
 cd ~
-git clone https://github.com/aws-samples/non-profit-blockchain.git
+git clone --single-branch -b byzantine-flu-us https://github.com/bradflood/non-profit-blockchain.git
 ```
 
-You will need to set the context before carrying out any Fabric CLI commands. We do this 
+You will need to set the context before carrying out any Fabric CLI commands. We do this
 using the export files that were generated for us in [Part 1](../ngo-fabric/README.md)
 
-Source the file, so the exports are applied to your current session. If you exit the SSH 
+Source the file, so the exports are applied to your current session. If you exit the SSH
 session and re-connect, you'll need to source the file again. The `source` command below
 will print out the values of the key ENV variables. Make sure they are all populated. If
 they are not, follow Step 4 in [Part 1](../ngo-fabric/README.md) to repopulate them:
 
-```
+```bash
 cd ~/non-profit-blockchain/ngo-fabric
 source fabric-exports.sh
 ```
 
 Check the peer export file exists and that it contains a number of export keys with values:
 
+```bash
+cat ~/peer-exports.sh
 ```
-cat ~/peer-exports.sh 
-```
+
 If the file has values for all keys, source it:
 
-```
-source ~/peer-exports.sh 
+```bash
+source ~/peer-exports.sh
 ```
 
 ## Step 1 - Copy the chaincode into the CLI container
@@ -53,14 +54,14 @@ mounts a folder from the Fabric client node EC2 instance: /home/ec2-user/fabric-
 You can see this by looking at the docker config. Look at the `Mounts` section in the output where
 you'll see `/home/ec2-user/fabric-samples/chaincode` mounted into the Docker container:
 
-```
+```bash
 docker inspect cli
 ```
 
-You should already have this folder on your Fabric client node as it was created earlier. Copying the 
+You should already have this folder on your Fabric client node as it was created earlier. Copying the
 chaincode into this folder will make it accessible inside the Fabric CLI container.
 
-```
+```bash
 cd ~
 mkdir -p ./fabric-samples/chaincode/ngo
 cp ./non-profit-blockchain/ngo-chaincode/src/* ./fabric-samples/chaincode/ngo
@@ -74,7 +75,7 @@ chaincode.
 
 Notice we are using the `-l node` flag, as our chaincode is written in Node.js.
 
-```
+```bash
 docker exec -e "CORE_PEER_TLS_ENABLED=true" -e "CORE_PEER_TLS_ROOTCERT_FILE=/opt/home/managedblockchain-tls-chain.pem" \
     -e "CORE_PEER_LOCALMSPID=$MSP" -e "CORE_PEER_MSPCONFIGPATH=$MSP_PATH" -e "CORE_PEER_ADDRESS=$PEER"  \
     cli peer chaincode install -n ngo -l node -v v0 -p /opt/gopath/src/github.com/ngo
@@ -99,7 +100,7 @@ policy of 'any member of the organizations in the channel' is applied.
 
 It can take up to 30 seconds to instantiate chaincode on the channel.
 
-```
+```bash
 docker exec -e "CORE_PEER_TLS_ENABLED=true" -e "CORE_PEER_TLS_ROOTCERT_FILE=/opt/home/managedblockchain-tls-chain.pem" \
     -e "CORE_PEER_LOCALMSPID=$MSP" -e "CORE_PEER_MSPCONFIGPATH=$MSP_PATH" -e "CORE_PEER_ADDRESS=$PEER"  \
     cli peer chaincode instantiate -o $ORDERER -C mychannel -n ngo -v v0 -c '{"Args":["init"]}' --cafile /opt/home/managedblockchain-tls-chain.pem --tls
@@ -109,7 +110,7 @@ Expected response:
 (Note this might fail if the chaincode has been previously instantiated. Chaincode only needs to be
 instantiated once on a channel)
 
-```
+```bash
 2018-11-15 06:41:02.847 UTC [chaincodeCmd] checkChaincodeCmdParams -> INFO 001 Using default escc
 2018-11-15 06:41:02.847 UTC [chaincodeCmd] checkChaincodeCmdParams -> INFO 002 Using default vscc
 ```
@@ -117,7 +118,8 @@ instantiated once on a channel)
 ## Step 4 - Query the chaincode
 
 Query all donors
-```
+
+```bash
 docker exec -e "CORE_PEER_TLS_ENABLED=true" -e "CORE_PEER_TLS_ROOTCERT_FILE=/opt/home/managedblockchain-tls-chain.pem" \
     -e "CORE_PEER_ADDRESS=$PEER" -e "CORE_PEER_LOCALMSPID=$MSP" -e "CORE_PEER_MSPCONFIGPATH=$MSP_PATH" \
     cli peer chaincode query -C mychannel -n ngo -c '{"Args":["queryAllDonors"]}'

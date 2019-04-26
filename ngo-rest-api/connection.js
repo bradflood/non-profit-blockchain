@@ -38,7 +38,7 @@ async function getClientForOrg (userorg, username) {
 
 	logger.info('##### getClientForOrg - state and crypto stores created successfully');
 
-	// Try and obtain the user from persistence if the user has previously been 
+	// Try to obtain the user from persistence if the user has previously been 
 	// registered and enrolled
 	if(username) {
 		let user = await client.getUserContext(username, true);

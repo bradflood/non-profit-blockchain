@@ -486,12 +486,7 @@ app.post('/spend', awaitHandler(async (req, res) => {
 	logger.info('##### dummySpend - args : ' + JSON.stringify(args));
 	logger.info('##### dummySpend - peers : ' + peers);
 
-	try {
-		let message = await invoke.invokeChaincode(peers, channelName, chaincodeName, args, fcn, username, orgName);
-	} catch (error) {
-			logger.error('##### Post for Spend - Failed to execute chaincode.xxx');
-			return 'failed '+error.toString();
-	}
+	let message = await invoke.invokeChaincode(peers, channelName, chaincodeName, args, fcn, username, orgName);
 	res.send(message);
 }));
 
