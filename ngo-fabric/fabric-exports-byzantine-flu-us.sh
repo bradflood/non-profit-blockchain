@@ -74,4 +74,5 @@ export CAFILE=/opt/home/managedblockchain-tls-chain.pem
 export CHAINCODENAME=ngo
 export CHAINCODEVERSION=v0
 export CHAINCODEDIR=github.com/chaincode_example02/go
+export PATH=$PATH:/home/ec2-user/go/src/github.com/hyperledger/fabric-ca/bin
 EOF

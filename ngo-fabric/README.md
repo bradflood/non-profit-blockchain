@@ -4,12 +4,12 @@ This section will build a Hyperledger Fabric blockchain network using Amazon Man
 
 * Provision an AWS Cloud9 instance. We will use the Linux terminal that Cloud9 provides
 * Use the Amazon Managed Blockchain console to create a Fabric network and provision a peer node
-* From Cloud9, run an AWS CloudFormation template to provision a VPC and a Fabric client node. You 
+* From Cloud9, run an AWS CloudFormation template to provision a VPC and a Fabric client node. You
 will use the Fabric client node to administer the Fabric network
-* From the Fabric client node, create a Fabric channel, install and instantiate chaincode, and 
-query and invoke transactions on the Fabric network
+* From the Fabric client node, create a Fabric channel, install and instantiate chaincode, and
 
 ## Pre-requisites - AWS Cloud9
+
 We will use AWS Cloud9 to provide a Linux terminal which has the AWS CLI already installed.
 
 1. Spin up a [Cloud9 IDE](https://us-east-1.console.aws.amazon.com/cloud9/home?region=us-east-1) from the AWS console.
@@ -32,7 +32,7 @@ sudo pip install awscli --upgrade
 
 ## Step 1 - Create the Hyperledger Fabric blockchain network
 
-In the Amazon Managed Blockchain Console: https://console.aws.amazon.com/managedblockchain
+In the Amazon Managed Blockchain Console: <https://console.aws.amazon.com/managedblockchain>
 
 Make sure you are in the correct AWS region (i.e. us-east-1, also known as N. Virginia) and follow the steps below:
 
@@ -49,7 +49,7 @@ wait for it to complete. Otherwise the steps below may fail.
 
 ## Step 2 - Create the Fabric Peer
 
-In the Amazon Managed Blockchain Console: https://console.aws.amazon.com/managedblockchain
+In the Amazon Managed Blockchain Console: <https://console.aws.amazon.com/managedblockchain>
 
 1. In the new network you have created, click on the member in the Members section.
 2. Click `Create peer node`
@@ -62,11 +62,11 @@ We'll continue with the next steps while we wait for the peer node to become Ava
 In your Cloud9 terminal window.
 
 Create the Fabric client node, which will host the Fabric CLI. You will use the CLI to administer
-the Fabric network. The Fabric client node will be created in its own VPC in your AWS account, with VPC endpoints 
-pointing to the Fabric network you created in [Part 1](../ngo-fabric/README.md). AWS CloudFormation 
+the Fabric network. The Fabric client node will be created in its own VPC in your AWS account, with VPC endpoints
+pointing to the Fabric network you created in [Part 1](../ngo-fabric/README.md). AWS CloudFormation
 will be used to create the Fabric client node, the VPC and the VPC endpoints.
 
-The AWS CloudFormation template requires a number of parameter values. We'll make sure these 
+The AWS CloudFormation template requires a number of parameter values. We'll make sure these
 are available as export variables before running the script below.
 
 In Cloud9:
@@ -142,7 +142,6 @@ Source the file, so the exports are applied to your current session. If you exit
 session and re-connect, you'll need to source the file again.
 
 ```bash
-
 cd ~/non-profit-blockchain/ngo-fabric
 source fabric-exports.sh
 ```
@@ -161,7 +160,7 @@ echo $PEERSERVICEENDPOINT
 
 The output should be similar to the following
 
-```
+```bash
 nd-4MHB4EKFCRF7VBHXZE2ZU4F6GY.m-B7YYBFY4GREBZLPCO2SUS4GP3I.n-WDG36TTUD5HEJORZUPF4REKMBI.managedblockchain.us-east-1.amazonaws.com:30003
 ```
 
@@ -268,7 +267,7 @@ Fabric client node, you can see the block file here:
 ls -lt /home/ec2-user/fabric-samples/chaincode/hyperledger/fabric/peer
 ```
 
-If the channel creation times out, it's possible that the channel has still been created and you can get 
+If the channel creation times out, it's possible that the channel has still been created and you can get
 the block from the channel itself. Executing the command below will read the channel config and save the
 genesis block in the same directory as mentioned above:
 
@@ -276,7 +275,7 @@ genesis block in the same directory as mentioned above:
 docker exec -e "CORE_PEER_TLS_ENABLED=true" -e "CORE_PEER_TLS_ROOTCERT_FILE=/opt/home/managedblockchain-tls-chain.pem"  \
     -e "CORE_PEER_ADDRESS=$PEER"  -e "CORE_PEER_LOCALMSPID=$MSP" -e "CORE_PEER_MSPCONFIGPATH=$MSP_PATH" \
     cli peer channel fetch oldest /opt/home/fabric-samples/chaincode/hyperledger/fabric/peer/$CHANNEL.block \
-    -c $CHANNEL -o $ORDERER --cafile /opt/home/managedblockchain-tls-chain.pem --tls   
+    -c $CHANNEL -o $ORDERER --cafile /opt/home/managedblockchain-tls-chain.pem --tls
 ```
 
 Check that the block file now exists:
@@ -300,11 +299,8 @@ docker exec -e "CORE_PEER_TLS_ENABLED=true" -e "CORE_PEER_TLS_ROOTCERT_FILE=/opt
 ```
 
 You should see:
-
-```
 2018-11-26 21:41:40.983 UTC [channelCmd] InitCmdFactory -> INFO 001 Endorser and orderer connections initialized
 2018-11-26 21:41:41.022 UTC [channelCmd] executeJoin -> INFO 002 Successfully submitted proposal to join channel
-```
 
 ## Step 8 - Install chaincode on your peer node
 
@@ -321,12 +317,9 @@ docker exec -e "CORE_PEER_TLS_ENABLED=true" -e "CORE_PEER_TLS_ROOTCERT_FILE=/opt
 ```
 
 You should see:
-
-```bash
 2018-11-26 21:41:46.585 UTC [chaincodeCmd] checkChaincodeCmdParams -> INFO 001 Using default escc
 2018-11-26 21:41:46.585 UTC [chaincodeCmd] checkChaincodeCmdParams -> INFO 002 Using default vscc
-2018-11-26 21:41:48.004 UTC [chaincodeCmd] install -> INFO 003 Installed remotely response:<status:200 payload:"OK" > 
-```
+2018-11-26 21:41:48.004 UTC [chaincodeCmd] install -> INFO 003 Installed remotely response:<status:200 payload:"OK" >
 
 ## Step 9 - Instantiate the chaincode on the channel
 
@@ -337,7 +330,7 @@ won't see a specific success response.
 
 Execute the following script:
 
-```
+```bash
 docker exec -e "CORE_PEER_TLS_ENABLED=true" -e "CORE_PEER_TLS_ROOTCERT_FILE=/opt/home/managedblockchain-tls-chain.pem" \
     -e "CORE_PEER_ADDRESS=$PEER" -e "CORE_PEER_LOCALMSPID=$MSP" -e "CORE_PEER_MSPCONFIGPATH=$MSP_PATH" \
     cli peer chaincode instantiate -o $ORDERER -C $CHANNEL -n $CHAINCODENAME -v $CHAINCODEVERSION \
@@ -345,11 +338,8 @@ docker exec -e "CORE_PEER_TLS_ENABLED=true" -e "CORE_PEER_TLS_ROOTCERT_FILE=/opt
 ```
 
 You should see:
-
-```bash
 2018-11-26 21:41:53.738 UTC [chaincodeCmd] checkChaincodeCmdParams -> INFO 001 Using default escc
 2018-11-26 21:41:53.738 UTC [chaincodeCmd] checkChaincodeCmdParams -> INFO 002 Using default vscc
-```
 
 ## Step 10 - Query the chaincode
 
@@ -362,14 +352,11 @@ Execute the following script:
 ```bash
 docker exec -e "CORE_PEER_TLS_ENABLED=true" -e "CORE_PEER_TLS_ROOTCERT_FILE=/opt/home/managedblockchain-tls-chain.pem" \
     -e "CORE_PEER_ADDRESS=$PEER" -e "CORE_PEER_LOCALMSPID=$MSP" -e "CORE_PEER_MSPCONFIGPATH=$MSP_PATH" \
-    cli peer chaincode query -C $CHANNEL -n $CHAINCODENAME -c '{"Args":["query","a"]}' 
+    cli peer chaincode query -C $CHANNEL -n $CHAINCODENAME -c '{"Args":["query","a"]}'
 ```
 
 You should see:
-
-```
 100
-```
 
 ## Step 11 - Invoke a transaction
 
@@ -387,10 +374,7 @@ docker exec -e "CORE_PEER_TLS_ENABLED=true" -e "CORE_PEER_TLS_ROOTCERT_FILE=/opt
 ```
 
 You should see:
-
-```bash
-2018-11-26 21:45:20.935 UTC [chaincodeCmd] chaincodeInvokeOrQuery -> INFO 001 Chaincode invoke successful. result: status:200 
-```
+2018-11-26 21:45:20.935 UTC [chaincodeCmd] chaincodeInvokeOrQuery -> INFO 001 Chaincode invoke successful. result: status:200
 
 ## Step 12 - Query the chaincode again and check the change in value
 
@@ -413,24 +397,21 @@ new value from the ledger (or more specifically, from the world state key-value 
 
 Execute the following script:
 
-```
+```bash
 docker exec -e "CORE_PEER_TLS_ENABLED=true" -e "CORE_PEER_TLS_ROOTCERT_FILE=/opt/home/managedblockchain-tls-chain.pem" \
     -e "CORE_PEER_ADDRESS=$PEER" -e "CORE_PEER_LOCALMSPID=$MSP" -e "CORE_PEER_MSPCONFIGPATH=$MSP_PATH" \
-    cli peer chaincode query -C $CHANNEL -n $CHAINCODENAME -c '{"Args":["query","a"]}' 
+    cli peer chaincode query -C $CHANNEL -n $CHAINCODENAME -c '{"Args":["query","a"]}'
 ```
 
 You should see:
-
-```bash
 90
-```
 
 ## Move on to Part 2
 
 The workshop instructions can be found in the README files in parts 1-4:
 
 * [Part 1:](../ngo-fabric/README.md) Start the workshop by building the Hyperledger Fabric blockchain network using Amazon Managed Blockchain.
-* [Part 2:](../ngo-chaincode/README.md) Deploy the non-profit chaincode. 
-* [Part 3:](../ngo-rest-api/README.md) Run the RESTful API server. 
-* [Part 4:](../ngo-ui/README.md) Run the application. 
-* [Part 5:](../new-member/README.md) Add a new member to the network. 
+* [Part 2:](../ngo-chaincode/README.md) Deploy the non-profit chaincode.
+* [Part 3:](../ngo-rest-api/README.md) Run the RESTful API server.
+* [Part 4:](../ngo-ui/README.md) Run the application.
+* [Part 5:](../new-member/README.md) Add a new member to the network.
