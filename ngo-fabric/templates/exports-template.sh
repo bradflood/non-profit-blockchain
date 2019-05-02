@@ -21,12 +21,11 @@ export NETWORKVERSION=1.2
 export ADMINUSER=<admin username>
 export ADMINPWD=<admin pwd>
 
-echo Downloading and installing model file for new service
-cd ~
-aws s3 cp s3://us-east-1.managedblockchain-preview/etc/service-2.json .
-aws configure add-model --service-model file://service-2.json
-
 # No need to change anything below here
+echo Updating AWS CLI to the latest version
+sudo pip install awscli --upgrade
+cd ~
+
 aws configure set region $REGION
 export NETWORKID=$(aws managedblockchain list-networks --region $REGION --name $NETWORKNAME --query 'Networks[0].Id' --output text)
 export MEMBERID=$(aws managedblockchain list-members --network-id $NETWORKID --name $MEMBERNAME --query 'Members[0].Id' --output text)

@@ -24,13 +24,10 @@ cd ~
 git clone https://github.com/bradflood/non-profit-blockchain.git
 ```
 
-Download the model file for the new Amazon Managed Blockchain service. This is a temporary step
-and will not be required once the `managedblockchain` service has been included in the latest CLI.
+Update your AWS CLI to the latest version.
 
 ```bash
-cd ~
-aws s3 cp s3://us-east-1.managedblockchain-preview/etc/service-2.json .
-aws configure add-model --service-model file://service-2.json
+sudo pip install awscli --upgrade
 ```
 
 ## Step 1 - Create the Hyperledger Fabric blockchain network
@@ -124,14 +121,14 @@ ssh ec2-user@<dns of EC2 instance> -i ~/<Fabric network name>-keypair.pem
 
 Clone the repo:
 
-```
+```bash
 cd ~
 git clone https://github.com/bradflood/non-profit-blockchain.git
 ```
 
 Create the file that includes the ENV export values that define your Fabric network configuration.
 
-```
+```bash
 cd ~/non-profit-blockchain/ngo-fabric
 cp templates/exports-template.sh fabric-exports.sh
 vi fabric-exports.sh
@@ -164,7 +161,7 @@ echo $PEERSERVICEENDPOINT
 
 The output should be similar to the following
 
-```text
+```
 nd-4MHB4EKFCRF7VBHXZE2ZU4F6GY.m-B7YYBFY4GREBZLPCO2SUS4GP3I.n-WDG36TTUD5HEJORZUPF4REKMBI.managedblockchain.us-east-1.amazonaws.com:30003
 ```
 
@@ -183,7 +180,7 @@ source ~/peer-exports.sh
 Get the latest version of the Managed Blockchain PEM file. This will overwrite the existing file in the home directory with the latest version of this file:
 
 ```bash
-aws s3 cp s3://us-east-1.managedblockchain-preview/etc/managedblockchain-tls-chain.pem  /home/ec2-user/managedblockchain-tls-chain.pem
+aws s3 cp s3://us-east-1.managedblockchain/etc/managedblockchain-tls-chain.pem  /home/ec2-user/managedblockchain-tls-chain.pem
 ```
 
 Enroll an admin identity with the Fabric CA (certificate authority). We will use this
@@ -224,7 +221,7 @@ docker exec cli configtxgen -outputCreateChannelTx /opt/home/$CHANNEL.pb -profil
 
 You should see:
 
-```
+```bash
 2018-11-26 21:41:22.885 UTC [common/tools/configtxgen] main -> INFO 001 Loading configuration
 2018-11-26 21:41:22.887 UTC [common/tools/configtxgen] doOutputChannelCreateTx -> INFO 002 Generating new channel configtx
 2018-11-26 21:41:22.887 UTC [common/tools/configtxgen/encoder] NewApplicationGroup -> WARN 003 Default policy emission is deprecated, please include policy specificiations for the application group in configtx.yaml
@@ -249,7 +246,7 @@ Execute the following script:
 ```bash
 docker exec -e "CORE_PEER_TLS_ENABLED=true" -e "CORE_PEER_TLS_ROOTCERT_FILE=/opt/home/managedblockchain-tls-chain.pem" \
     -e "CORE_PEER_ADDRESS=$PEER" -e "CORE_PEER_LOCALMSPID=$MSP" -e "CORE_PEER_MSPCONFIGPATH=$MSP_PATH" \
-    cli peer channel create -c $CHANNEL -f /opt/home/$CHANNEL.pb -o $ORDERER --cafile $CAFILE --tls
+    cli peer channel create -c $CHANNEL -f /opt/home/$CHANNEL.pb -o $ORDERER --cafile $CAFILE --tls --timeout 900s
 ```
 
 You should see:
@@ -289,13 +286,14 @@ ls -lt /home/ec2-user/fabric-samples/chaincode/hyperledger/fabric/peer
 ```
 
 ## Step 7 - Join your peer node to the channel
+
 On the Fabric client node.
 
 Join peer to Fabric channel.
 
 Execute the following script:
 
-```
+```bash
 docker exec -e "CORE_PEER_TLS_ENABLED=true" -e "CORE_PEER_TLS_ROOTCERT_FILE=/opt/home/managedblockchain-tls-chain.pem" \
     -e "CORE_PEER_ADDRESS=$PEER" -e "CORE_PEER_LOCALMSPID=$MSP" -e "CORE_PEER_MSPCONFIGPATH=$MSP_PATH" \
     cli peer channel join -b $CHANNEL.block  -o $ORDERER --cafile $CAFILE --tls
@@ -309,13 +307,14 @@ You should see:
 ```
 
 ## Step 8 - Install chaincode on your peer node
+
 On the Fabric client node.
 
 Install chaincode on Fabric peer.
 
 Execute the following script:
 
-```
+```bash
 docker exec -e "CORE_PEER_TLS_ENABLED=true" -e "CORE_PEER_TLS_ROOTCERT_FILE=/opt/home/managedblockchain-tls-chain.pem" \
     -e "CORE_PEER_ADDRESS=$PEER" -e "CORE_PEER_LOCALMSPID=$MSP" -e "CORE_PEER_MSPCONFIGPATH=$MSP_PATH" \
     cli peer chaincode install -n $CHAINCODENAME -v $CHAINCODEVERSION -p $CHAINCODEDIR
@@ -323,13 +322,14 @@ docker exec -e "CORE_PEER_TLS_ENABLED=true" -e "CORE_PEER_TLS_ROOTCERT_FILE=/opt
 
 You should see:
 
-```
+```bash
 2018-11-26 21:41:46.585 UTC [chaincodeCmd] checkChaincodeCmdParams -> INFO 001 Using default escc
 2018-11-26 21:41:46.585 UTC [chaincodeCmd] checkChaincodeCmdParams -> INFO 002 Using default vscc
 2018-11-26 21:41:48.004 UTC [chaincodeCmd] install -> INFO 003 Installed remotely response:<status:200 payload:"OK" > 
 ```
 
 ## Step 9 - Instantiate the chaincode on the channel
+
 On the Fabric client node.
 
 Instantiate chaincode on Fabric channel. This statement may take around 30 seconds, and you
@@ -346,19 +346,20 @@ docker exec -e "CORE_PEER_TLS_ENABLED=true" -e "CORE_PEER_TLS_ROOTCERT_FILE=/opt
 
 You should see:
 
-```
+```bash
 2018-11-26 21:41:53.738 UTC [chaincodeCmd] checkChaincodeCmdParams -> INFO 001 Using default escc
 2018-11-26 21:41:53.738 UTC [chaincodeCmd] checkChaincodeCmdParams -> INFO 002 Using default vscc
 ```
 
 ## Step 10 - Query the chaincode
+
 On the Fabric client node.
 
 Query the chaincode on Fabric peer.
 
 Execute the following script:
 
-```
+```bash
 docker exec -e "CORE_PEER_TLS_ENABLED=true" -e "CORE_PEER_TLS_ROOTCERT_FILE=/opt/home/managedblockchain-tls-chain.pem" \
     -e "CORE_PEER_ADDRESS=$PEER" -e "CORE_PEER_LOCALMSPID=$MSP" -e "CORE_PEER_MSPCONFIGPATH=$MSP_PATH" \
     cli peer chaincode query -C $CHANNEL -n $CHAINCODENAME -c '{"Args":["query","a"]}' 
@@ -371,13 +372,14 @@ You should see:
 ```
 
 ## Step 11 - Invoke a transaction
+
 On the Fabric client node.
 
 Invoke a Fabric transaction.
 
 Execute the following script:
 
-```
+```bash
 docker exec -e "CORE_PEER_TLS_ENABLED=true" -e "CORE_PEER_TLS_ROOTCERT_FILE=/opt/home/managedblockchain-tls-chain.pem" \
     -e "CORE_PEER_ADDRESS=$PEER" -e "CORE_PEER_LOCALMSPID=$MSP" -e "CORE_PEER_MSPCONFIGPATH=$MSP_PATH" \
     cli peer chaincode invoke -o $ORDERER -C $CHANNEL -n $CHAINCODENAME \
@@ -386,11 +388,12 @@ docker exec -e "CORE_PEER_TLS_ENABLED=true" -e "CORE_PEER_TLS_ROOTCERT_FILE=/opt
 
 You should see:
 
-```
+```bash
 2018-11-26 21:45:20.935 UTC [chaincodeCmd] chaincodeInvokeOrQuery -> INFO 001 Chaincode invoke successful. result: status:200 
 ```
 
 ## Step 12 - Query the chaincode again and check the change in value
+
 On the Fabric client node.
 
 Query the chaincode on the Fabric peer and check the change in value. This proves the success of the invoke
@@ -418,11 +421,12 @@ docker exec -e "CORE_PEER_TLS_ENABLED=true" -e "CORE_PEER_TLS_ROOTCERT_FILE=/opt
 
 You should see:
 
-```
+```bash
 90
 ```
 
 ## Move on to Part 2
+
 The workshop instructions can be found in the README files in parts 1-4:
 
 * [Part 1:](../ngo-fabric/README.md) Start the workshop by building the Hyperledger Fabric blockchain network using Amazon Managed Blockchain.
