@@ -13,6 +13,11 @@
 # express or implied. See the License for the specific language governing 
 # permissions and limitations under the License.
 
+
+# 5/2/19 this appears to be a duplicate of 2-fabric-peer.sh
+
+
+
 echo Create the Fabric Peer node
 token=$(uuidgen)
 echo Creating Fabric peer for network $networkname

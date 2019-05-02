@@ -13,6 +13,10 @@
 # express or implied. See the License for the specific language governing 
 # permissions and limitations under the License.
 
+
+# 5/2/19 not sure this is useful or necessary. Instead, use 3-vpc-client-node.sh
+
+
 sudo yum update -y
 sudo yum install -y telnet
 sudo yum -y install emacs

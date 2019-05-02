@@ -37,7 +37,8 @@ while (true); do
     fi
 done
 
-nodeID=nd-VVXIYKU2QZG77IO5HZH5TPRRBI
+#nodeID=$(aws managedblockchain list-nodes --region $REGION --network-id $NETWORKID --member-id $MEMBERID --query 'Nodes[0].Id' --output text)
+#nodeID=nd-VVXIYKU2QZG77IO5HZH5TPRRBI
 #AvailabilityZone=$(aws managedblockchain get-node  --region $REGION --network-id $NETWORKID --member-id $MEMBERID --node-id $nodeID --query 'Node.AvailabilityZone' --output text)
 endpoint=$(aws managedblockchain get-node --region $REGION --network-id $NETWORKID --member-id $MEMBERID --node-id $nodeID --query 'Node.FrameworkAttributes.Fabric.PeerEndpoint' --output text)
 echo Useful information

@@ -19,12 +19,12 @@ export NETWORKNAME=byzantine-flu-us
 export MEMBERNAME=KeyholeSoftware
 export NETWORKVERSION=1.2
 export ADMINUSER=byzantineAdmin
-export ADMINPWD=ilMBC.2019
+#export ADMINPWD=
 
-echo Downloading and installing model file for new service
+# No need to change anything below here
+echo Updating AWS CLI to the latest version
+sudo pip install awscli --upgrade
 cd ~
-aws s3 cp s3://us-east-1.managedblockchain-preview/etc/service-2.json .
-aws configure add-model --service-model file://service-2.json
 
 # No need to change anything below here
 aws configure set region $REGION
@@ -50,7 +50,7 @@ echo REGION: $REGION
 echo NETWORKNAME: $NETWORKNAME
 echo NETWORKVERSION: $NETWORKVERSION
 echo ADMINUSER: $ADMINUSER
-echo ADMINPWD: $ADMINPWD
+#echo ADMINPWD: $ADMINPWD
 echo MEMBERNAME: $MEMBERNAME
 echo NETWORKID: $NETWORKID
 echo MEMBERID: $MEMBERID
@@ -71,7 +71,7 @@ export ORDERER=$ORDERINGSERVICEENDPOINT
 export PEER=$PEERSERVICEENDPOINT
 export CHANNEL=mychannel
 export CAFILE=/opt/home/managedblockchain-tls-chain.pem
-export CHAINCODENAME=mycc
+export CHAINCODENAME=ngo
 export CHAINCODEVERSION=v0
 export CHAINCODEDIR=github.com/chaincode_example02/go
 EOF
