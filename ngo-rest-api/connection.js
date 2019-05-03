@@ -23,6 +23,11 @@ hfc.setLogger(logger);
 
 async function getClientForOrg (userorg, username) {
 	logger.info('============ START getClientForOrg for org %s and user %s', userorg, username);
+	if(!userorg) {
+		let message = util.format('##### getClientForOrg - userorg was not provided on the call line');
+		logger.error(message);
+		throw new Error(message);
+	}
     let config = '/tmp/connection-profile/ngo-connection-profile.yaml';
     let orgLower = userorg.toLowerCase();
     let clientConfig = '/tmp/connection-profile/' + orgLower + '/client-' + orgLower + '.yaml';
@@ -55,9 +60,16 @@ async function getClientForOrg (userorg, username) {
 
 var getRegisteredUser = async function(username, userorg, isJson) {
 	try {
-		logger.info('============ START getRegisteredUser - for org %s and user %s', userorg, username);
+		logger.info('============ START getRegisteredUser -- for org %s and user %s', userorg, username);
 		var client = await getClientForOrg(userorg);
+		logger.info('##### getRegisteredUser. client returned from getClientForOrg: %s', util.inspect(client));
 		var user = await client.getUserContext(username, true);
+		logger.info('##### getRegisteredUser. user returned from getUserContext: %s', util.inspect(user));
+
+		if (user && user.isEnrolled) {
+			logger.info('##### getRegisteredUser - xxxUser %s already enrolled', username);
+		}
+
 		if (user && user.isEnrolled()) {
 			logger.info('##### getRegisteredUser - User %s already enrolled', username);
 		} else {
