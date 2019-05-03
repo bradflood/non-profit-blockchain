@@ -83,7 +83,7 @@ and update them.  The connection profile can be found here: `~/non-profit-blockc
 ```bash
 cd ~/non-profit-blockchain/ngo-rest-api/connection-profile
 ./gen-connection-profile.sh
-more ~/non-profit-blockchain/tmp/connection-profile/ngo-connection-profile.yaml
+more /tmp/connection-profile/ngo-connection-profile.yaml
 ```
 
 Check the config file used by app.js. Make sure the peer name in config.json (under 'peers:') is
@@ -102,7 +102,7 @@ config.json should look something like this:
     "host":"localhost",
     "port":"3000",
     "channelName":"mychannel",
-    "chaincodeName":"ngo",
+    "chaincodeName":"ngo2",
     "eventWaitTime":"30000",
     "peers":[
         "peer1"
