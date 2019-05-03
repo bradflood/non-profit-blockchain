@@ -33,7 +33,7 @@ they are not, follow Step 4 in [Part 1](../ngo-fabric/README.md) to repopulate t
 
 ```bash
 cd ~/non-profit-blockchain/ngo-fabric
-source fabric-exports.sh
+source fabric-exports-byzantine-flu-us.sh
 ```
 
 ## Step 1 - Install Node
@@ -73,12 +73,12 @@ On the Fabric client node.
 
 The REST API needs a connection profile to connect to the Fabric network. Connection profiles describe
 the Fabric network and provide information needed by the Node.js application in order to connect to the
-Fabric network. The instructions below will auto-generate a connection profile. 
+Fabric network. The instructions below will auto-generate a connection profile.
 
-Generate the connection profile using the script below and check that the connection profile contains 
+Generate the connection profile using the script below and check that the connection profile contains
 URL endpoints for the peer, ordering service and CA, an 'mspid', a 'caName', and that the admin username and password
 match those you entered when creating the Fabric network. If they do not match, edit the connection profile
-and update them. The connection profile can be found here: `~/non-profit-blockchain/tmp/connection-profile/ngo-connection-profile.yaml`
+and update them.  The connection profile can be found here: `~/non-profit-blockchain/tmp/connection-profile/ngo-connection-profile.yaml`
 
 ```bash
 cd ~/non-profit-blockchain/ngo-rest-api/connection-profile
@@ -86,8 +86,8 @@ cd ~/non-profit-blockchain/ngo-rest-api/connection-profile
 more ~/non-profit-blockchain/tmp/connection-profile/ngo-connection-profile.yaml
 ```
 
-Check the config file used by app.js. Make sure the peer name in config.json (under 'peers:') is 
-the same as the peer name in the connection profile. Also check that the admin username and 
+Check the config file used by app.js. Make sure the peer name in config.json (under 'peers:') is
+the same as the peer name in the connection profile. Also check that the admin username and
 password are correct and match the values you updated in the connection profile.
 
 ```bash
@@ -184,7 +184,9 @@ response:
     {"docType":"donor","donorUserName":"edge","email":"edge@def.com","registeredDate":"2018-10-22T11:52:20.182Z"}
 ]
 ```
+
 ## Step 6 - Load the workshop test data
+
 In your Cloud9 terminal.
 
 You can do this step from anywhere as it accesses the ELB DNS endpoint. Executing this from the SSH
@@ -193,36 +195,36 @@ challenging to edit files. So you can open another terminal window in Cloud9 and
 from Cloud9.
 
 Loading the test data uses cURL commands similar to those you used above to test the API. If you load
-the test data from Cloud9 you'll need to point to the AWS Elastic Load Balancer (ELB) that is used to 
+the test data from Cloud9 you'll need to point to the AWS Elastic Load Balancer (ELB) that is used to
 expose your REST API (if you load the test data from your Fabric client node you could use 'localhost'
-as the endpoint since the REST API server is running on the Fabric client node). To find the 
+as the endpoint since the REST API server is running on the Fabric client node). To find the
 DNS endpoint for the ELB, go to the CloudFormation stack created in [Part 1](../ngo-fabric/README.md)
-and look for ELBDNS in the Outputs. If you receive an error using the ELB it might be because the underlying EC2 
+and look for ELBDNS in the Outputs. If you receive an error using the ELB it might be because the underlying EC2
 instance has not moved to an 'InService' state. This will happen once the REST API server is running
-and the ELB is able to execute the desired number of health checks against it. You can check the 
+and the ELB is able to execute the desired number of health checks against it. You can check the
 status in the EC2 console, under Load Balancers.
 
-```
+```bash
 cd ~/non-profit-blockchain/ngo-rest-api
 vi ngo-load-workshop.sh
 ```
 
-The line to be changed is this one. It should point to your ELB DNS. (it could point to `localhost` 
+The line to be changed is this one. It should point to your ELB DNS. (it could point to `localhost`
 if you run this on the Fabric client node. If you use `localhost` you also need to change the port to `3000`):
 
-```
+```bash
 export ENDPOINT=ngo10-elb-2090058053.us-east-1.elb.amazonaws.com
 export PORT=80
 ```
 
 After saving the changes, run the script:
 
-```
+```bash
 cd ~/non-profit-blockchain/ngo-rest-api
 ./ngo-load-workshop.sh
 ```
 
-# Testing
+## Testing
 
 The workshop runs the REST API server on the Fabric client node. If you exit the SSH session on the Fabric client node,
 the running REST API server will automatically exit. You would need to restart it after SSH'ing back into
@@ -239,5 +241,5 @@ The workshop instructions can be found in the README files in parts 1-4:
 * [Part 1:](../ngo-fabric/README.md) Start the workshop by building the Hyperledger Fabric blockchain network using Amazon Managed Blockchain.
 * [Part 2:](../ngo-chaincode/README.md) Deploy the non-profit chaincode.
 * [Part 3:](../ngo-rest-api/README.md) Run the RESTful API server.
-* [Part 4:](../ngo-ui/README.md) Run the application. 
+* [Part 4:](../ngo-ui/README.md) Run the application.
 * [Part 5:](../new-member/README.md) Add a new member to the network.

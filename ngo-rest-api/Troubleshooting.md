@@ -24,3 +24,16 @@ The identities used by the REST API are being cached. Remove the cache directori
 rm -rf fabric-client-kv-org1/
 rm -rf /tmp/fabric-client-kv-org1/
 ```
+
+
+# new
+[ec2-user@ip-10-0-121-1 ngo-rest-api]$ curl -s -X POST http://localhost:3000/users -H "content-type: application/x-www-form-urlencoded" -d 'username=michael&orgName=Org1'
+{"success":false,"message":"failed Error: Enrollment failed with errors [[{\"code\":20,\"message\":\"Authorization failure\"}]]"}[ec2-user@ip-10-0-121-1 ngo-rest-api]$ (node:3546) UnhandledPromiseRejectionWarning: Error: ##### invokeChaincode - Failed to invoke chaincode. cause:Error: ##### getClientForOrg - User was not found : michael
+    at Object.invokeChaincode (/home/ec2-user/non-profit-blockchain/ngo-rest-api/invoke.js:180:9)
+    at <anonymous>
+(node:3546) UnhandledPromiseRejectionWarning: Unhandled promise rejection. This error originated either by throwing inside of an async function without a catch block, or by rejecting a promise which was not handled with .catch(). (rejection id: 1)
+(node:3546) [DEP0018] DeprecationWarning: Unhandled promise rejections are deprecated. In the future, promise rejections that are not handled will terminate the Node.js process with a non-zero exit code.
+(node:3546) UnhandledPromiseRejectionWarning: Error: ##### invokeChaincode - Failed to invoke chaincode. cause:Error: ##### getClientForOrg - User was not found : michael
+    at Object.invokeChaincode (/home/ec2-user/non-profit-blockchain/ngo-rest-api/invoke.js:180:9)
+    at <anonymous>
+(node:3546) UnhandledPromiseRejectionWarning: Unhandled promise rejection. This error originated either by throwing inside of an async function without a catch block, or by rejecting a promise which was not handled with .catch(). (rejection id: 2)
