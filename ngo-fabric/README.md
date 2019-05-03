@@ -159,10 +159,7 @@ echo $PEERSERVICEENDPOINT
 ```
 
 The output should be similar to the following
-
-```bash
 nd-4MHB4EKFCRF7VBHXZE2ZU4F6GY.m-B7YYBFY4GREBZLPCO2SUS4GP3I.n-WDG36TTUD5HEJORZUPF4REKMBI.managedblockchain.us-east-1.amazonaws.com:30003
-```
 
 Check the peer export file exists and that it contains a number of export keys with values:
 
@@ -187,17 +184,8 @@ identity to administer the Fabric network and perform tasks such as creating cha
 and instantiating chaincode.
 
 ```bash
-export PATH=$PATH:/home/ec2-user/go/src/github.com/hyperledger/fabric-ca/bin
-cd ~
-fabric-ca-client enroll -u https://$ADMINUSER:$ADMINPWD@$CASERVICEENDPOINT --tls.certfiles /home/ec2-user/managedblockchain-tls-chain.pem -M /home/ec2-user/admin-msp
-```
-
-Some final copying of the certificates is necessary:
-
-```bash
-mkdir -p /home/ec2-user/admin-msp/admincerts
-cp ~/admin-msp/signcerts/* ~/admin-msp/admincerts/
-```
+cd ~/non-profit-blockchain/ngo-fabric
+./4-enroll-admin-identity.sh
 
 ## Step 5 - Update the configtx channel configuration
 

@@ -7,12 +7,12 @@ All steps are carried out on the Fabric client node you created in [Part 1](../n
 
 ## Pre-requisites
 
-From Cloud9, SSH into the Fabric client node. The key (i.e. the .PEM file) should be in your home directory. 
-The DNS of the Fabric client node EC2 instance can be found in the output of the CloudFormation stack you 
+From Cloud9, SSH into the Fabric client node. The key (i.e. the .PEM file) should be in your home directory.
+The DNS of the Fabric client node EC2 instance can be found in the output of the CloudFormation stack you
 created in [Part 1](../ngo-fabric/README.md)
 
 ```bash
-ssh ec2-user@<dns of EC2 instance> -i ~/<Fabric network name>-keypair.pem
+ssh  -i ~/<Fabric network name>-keypair.pem ec2-user@<dns of EC2 instance>
 ```
 
 You should have already cloned this repo in [Part 1](../ngo-fabric/README.md)
@@ -28,7 +28,18 @@ using the export files that were generated for us in [Part 1](../ngo-fabric/READ
 Source the file, so the exports are applied to your current session. If you exit the SSH
 session and re-connect, you'll need to source the file again. The `source` command below
 will print out the values of the key ENV variables. Make sure they are all populated. If
-they are not, follow Step 4 in [Part 1](../ngo-fabric/README.md) to repopulate them:
+they are not, follow Step 4 in [Part 1](../ngo-fabric/README.md) to repopulate them. After you've
+done it a few times, you can add this to ~/.bash_profile so the ENV variables will be available
+each time the session is restarted:
+
+```bash
+if [ -f ~/fabric-exports-byzantine-flu-us.sh ]; then
+    source ~/non-profit-blockchain/ngo-fabric/fabric-exports-byzantine-flu-us.sh
+fi
+if [ -f ~/peer-exports.sh ]; then
+    source ~/peer-exports.sh
+fi
+```
 
 ```bash
 cd ~/non-profit-blockchain/ngo-fabric
@@ -83,12 +94,10 @@ docker exec -e "CORE_PEER_TLS_ENABLED=true" -e "CORE_PEER_TLS_ROOTCERT_FILE=/opt
 
 Expected response:
 
-```
 2018-11-15 06:39:47.625 UTC [chaincodeCmd] checkChaincodeCmdParams -> INFO 001 Using default escc
 2018-11-15 06:39:47.625 UTC [chaincodeCmd] checkChaincodeCmdParams -> INFO 002 Using default vscc
 2018-11-15 06:39:47.625 UTC [container] WriteFolderToTarPackage -> INFO 003 rootDirectory = /opt/gopath/src/github.com/ngo
 2018-11-15 06:39:47.636 UTC [chaincodeCmd] install -> INFO 004 Installed remotely response:<status:200 payload:"OK" >
-```
 
 ## Step 3 - Instantiate the chaincode on the channel
 
@@ -128,15 +137,13 @@ docker exec -e "CORE_PEER_TLS_ENABLED=true" -e "CORE_PEER_TLS_ROOTCERT_FILE=/opt
 Expected response:
 This is correct as we do not have any donors in our network yet. We'll add one in the next step.
 
-```
 []
-```
 
 ## Step 5 - Invoke a transaction
 
 Let's add a couple of donors to Fabric. Execute both of these transactions below:
 
-```
+```bash
 docker exec -e "CORE_PEER_TLS_ENABLED=true" -e "CORE_PEER_TLS_ROOTCERT_FILE=/opt/home/managedblockchain-tls-chain.pem" \
     -e "CORE_PEER_ADDRESS=$PEER" -e "CORE_PEER_LOCALMSPID=$MSP" -e "CORE_PEER_MSPCONFIGPATH=$MSP_PATH" \
     cli peer chaincode invoke -C mychannel -n ngo \
@@ -151,25 +158,27 @@ docker exec -e "CORE_PEER_TLS_ENABLED=true" -e "CORE_PEER_TLS_ROOTCERT_FILE=/opt
 ## Step 6 - Query the chaincode
 
 Query all donors
-```
+
+```bash
 docker exec -e "CORE_PEER_TLS_ENABLED=true" -e "CORE_PEER_TLS_ROOTCERT_FILE=/opt/home/managedblockchain-tls-chain.pem" \
     -e "CORE_PEER_ADDRESS=$PEER" -e "CORE_PEER_LOCALMSPID=$MSP" -e "CORE_PEER_MSPCONFIGPATH=$MSP_PATH" \
     cli peer chaincode query -C mychannel -n ngo -c '{"Args":["queryAllDonors"]}'
 ```
 
 Query a specific donor
-```
+
+```bash
 docker exec -e "CORE_PEER_TLS_ENABLED=true" -e "CORE_PEER_TLS_ROOTCERT_FILE=/opt/home/managedblockchain-tls-chain.pem" \
     -e "CORE_PEER_ADDRESS=$PEER" -e "CORE_PEER_LOCALMSPID=$MSP" -e "CORE_PEER_MSPCONFIGPATH=$MSP_PATH" \
     cli peer chaincode query -C mychannel -n ngo -c '{"Args":["queryDonor","{\"donorUserName\": \"edge\"}"]}'
 ```
 
 ## Move on to Part 3
+
 The workshop instructions can be found in the README files in parts 1-4:
 
 * [Part 1:](../ngo-fabric/README.md) Start the workshop by building the Hyperledger Fabric blockchain network using Amazon Managed Blockchain.
-* [Part 2:](../ngo-chaincode/README.md) Deploy the non-profit chaincode. 
-* [Part 3:](../ngo-rest-api/README.md) Run the RESTful API server. 
-* [Part 4:](../ngo-ui/README.md) Run the application. 
-* [Part 5:](../new-member/README.md) Add a new member to the network. 
-
+* [Part 2:](../ngo-chaincode/README.md) Deploy the non-profit chaincode.
+* [Part 3:](../ngo-rest-api/README.md) Run the RESTful API server.
+* [Part 4:](../ngo-ui/README.md) Run the application.
+* [Part 5:](../new-member/README.md) Add a new member to the network.

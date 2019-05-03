@@ -14,7 +14,7 @@
 # permissions and limitations under the License.
 
 
-# 5/2/19 not sure this is useful or necessary. Instead, use 3-vpc-client-node.sh
+# 5/2/19 unsure of need for this. 
 
 
 sudo yum update -y

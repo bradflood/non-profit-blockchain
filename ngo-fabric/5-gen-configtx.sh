@@ -16,6 +16,4 @@
 #copy the configtx template
 cp ~/non-profit-blockchain/ngo-fabric/templates/configtx.yaml ~
 
-#update the connection profiles with endpoints and other information
-sed -i "s|<REPLACE WITH MEMBER_NAME>|$MEMBERNAME|g" ~/configtx.yaml
 sed -i "s|<REPLACE WITH MEMBER_ID>|$MEMBERID|g" ~/configtx.yaml
